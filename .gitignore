@@ -1,0 +1,5 @@
+.env
+dataset/processed/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
