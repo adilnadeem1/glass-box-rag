@@ -8,3 +8,9 @@ embedding:
 vector_store:
   persist_directory: "dataset/processed/chroma_db"
   collection_name: "rag_poc"
+
+llm:
+  provider: "groq"
+  model_name: "openai/gpt-oss-20b"
+  temperature: 0.1
+  max_tokens: 1024

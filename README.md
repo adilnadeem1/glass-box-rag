@@ -36,10 +36,12 @@ rag-poc/
 │   └── embedder.py                   # Wraps bge-small-en-v1.5 and handles query/doc prefix distinction
 │   └── indexer.py                    # chunks + embeds documents, persists to Chroma
 │   └── retriever.py                  # queries Chroma, returns top-k chunks for a query
+│   └── generator.py                  # builds grounding prompt, calls Groq LLM
 │
 ├── notebooks/                        # Exploration/debugging, not pipeline code
 │   ├── explore_chunking.py           # Diagnostic: naive vs. sentence-aware chunking
 │   └── explore_embeddings.py         # Diagnostic: verifies semantic similarity behaves as expected
+│   └── explore_llm.py                # sanity check: raw Groq API call before RAG logic
 │
 ├── eval/                             # Evaluation sets and evaluation scripts 
 │                           
@@ -62,8 +64,8 @@ rag-poc/
 | Chunking | `src/chunker.py` | ✅ |
 | Embedding | `src/embedder.py` | ✅ |
 | Vector store indexing | `src/indexer.py` | ✅ |
-| Retrieval | `src/retriever.py` | ⬜ |
-| Generation (LLM) | `src/generator.py` | ⬜ |
+| Retrieval | `src/retriever.py` | ✅ |
+| Generation (LLM) | `src/generator.py` | ✅ |
 | End-to-end pipeline | `src/pipeline.py` | ⬜ |
 | Evaluation | `eval/run_eval.py` | ⬜ |
 
@@ -144,6 +146,18 @@ python test_embedder.py
 - **Why cosine distance means "smaller = more similar"?** Distance, not
   similarity - Chroma returns `1 - cosine_similarity` under the hood when
   configured for cosine space, so lower values indicate closer/better matches.
+- **Why a strict grounding system prompt?** Without explicit instructions to
+  refuse answering outside the given context, LLMs default to blending
+  retrieved context with their own training knowledge - undermining the
+  entire point of RAG (traceable, verifiable answers). The prompt explicitly
+  forbids outside knowledge and requires a fallback ("I don't have enough
+  information") rather than guessing.
+- **Why low temperature (0.1) for generation?** Factual grounding is
+  prioritized over creative phrasing - lower temperature reduces the
+  likelihood of the model drifting from the literal provided context.
+- **Why test generation with fake chunks first?** Isolates whether a bug
+  lives in the prompt/LLM call itself vs. in how retrieved chunks are
+  formatted and passed in from `retriever.py`.
 
 ## Known issues / gotchas
 
