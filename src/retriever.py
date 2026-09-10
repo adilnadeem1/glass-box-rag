@@ -1,11 +1,14 @@
 import chromadb
 import yaml
 from embedder import Embedder
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Retriever:
     def __init__(self, persist_directory, collection_name, embedder: Embedder):
         self.client = chromadb.PersistentClient(path=persist_directory)
-        self.collection = self.client.get_collection(name=self.collection_name)
+        self.collection = self.client.get_collection(name=collection_name)
         self.embedder = embedder
         
     def retrieve(self, query: str, top_k: int = 5):

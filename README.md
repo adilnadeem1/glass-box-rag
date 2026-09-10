@@ -33,20 +33,22 @@ rag-poc/
 │   ├── download_data.py              # Pulls SQuAD 2.0 subset from Hugging Face
 │   ├── loader.py                     # Loads and de-duplicates documents
 │   ├── chunker.py                    # Sentence-aware chunking with overlap
-│   └── embedder.py                   # Wraps bge-small-en-v1.5 and handles query/doc prefix distinction
-│   └── indexer.py                    # chunks + embeds documents, persists to Chroma
-│   └── retriever.py                  # queries Chroma, returns top-k chunks for a query
-│   └── generator.py                  # builds grounding prompt, calls Groq LLM
+│   ├── embedder.py                   # Wraps bge-small-en-v1.5 and handles query/doc prefix distinction
+│   ├── indexer.py                    # chunks + embeds documents, persists to Chroma
+│   ├── retriever.py                  # queries Chroma, returns top-k chunks for a query
+│   ├── generator.py                  # builds grounding prompt, calls Groq LLM
+│   └── pipeline.py                   # chains retriever + generator into one callable RAGPipeline
 │
 ├── notebooks/                        # Exploration/debugging, not pipeline code
 │   ├── explore_chunking.py           # Diagnostic: naive vs. sentence-aware chunking
-│   └── explore_embeddings.py         # Diagnostic: verifies semantic similarity behaves as expected
-│   └── explore_llm.py                # sanity check: raw Groq API call before RAG logic
+│   ├── explore_embeddings.py         # Diagnostic: verifies semantic similarity behaves as expected
+│   ├── explore_llm.py                # sanity check: raw Groq API call before RAG logic
+│   └── explore_pipeline_quality.py   # manual eyeball check: generated answers vs SQuAD ground truth
 │
 ├── eval/                             # Evaluation sets and evaluation scripts 
 │                           
 ├── tests/                            # Testing scripts for different modules
-│   ├── test_embedder.py              # contract tests: shape, normalization, determinism, query-prefix behavior
+│   └── test_embedder.py              # contract tests: shape, normalization, determinism, query-prefix behavior
 │
 ├── config.yaml                       # Tunable pipeline parameters
 ├── .env                              # Secrets, gitignored
@@ -66,7 +68,7 @@ rag-poc/
 | Vector store indexing | `src/indexer.py` | ✅ |
 | Retrieval | `src/retriever.py` | ✅ |
 | Generation (LLM) | `src/generator.py` | ✅ |
-| End-to-end pipeline | `src/pipeline.py` | ⬜ |
+| End-to-end pipeline | `src/pipeline.py` | ✅ |
 | Evaluation | `eval/run_eval.py` | ⬜ |
 
 ## How to run what exists so far
@@ -158,6 +160,17 @@ python test_embedder.py
 - **Why test generation with fake chunks first?** Isolates whether a bug
   lives in the prompt/LLM call itself vs. in how retrieved chunks are
   formatted and passed in from `retriever.py`.
+- **Why build components once in `__init__`, not per-query?** Embedder model
+  loading and the Chroma client connection are expensive one-time costs.
+  Separating setup (`__init__`) from per-query work (`run`) avoids repeating
+  that cost on every question - matters once running batch evaluation
+  (Step 9) over many queries.
+- **Why manually eyeball answers before automated eval?** A quick pass over
+  5-10 real question/ground-truth pairs surfaces obvious systemic issues
+  (bad retrieval vs. bad generation) faster than running a full metric suite
+  blind. It also tells you which failure mode to expect before interpreting
+  RAGAS scores in Step 9 - a low faithfulness score means something
+  different if you already know retrieval is solid vs. shaky.
 
 ## Known issues / gotchas
 
@@ -175,3 +188,7 @@ python test_embedder.py
 - Chroma query results are structured as lists-of-lists (one outer list per
   query in the batch) - `results["documents"][0]` is the actual result list,
   not `results["documents"]`
+- SQuAD 2.0 includes unanswerable questions (`answers.text` is empty) -
+  filter these out for initial pipeline sanity checks; they become useful
+  once specifically testing whether the system correctly refuses to answer
+  (see eval stage)
