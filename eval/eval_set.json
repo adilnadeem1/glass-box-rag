@@ -1,0 +1,82 @@
+[
+  {
+    "question": "When did Beyonce start becoming popular?",
+    "ground_truth": "in the late 1990s"
+  },
+  {
+    "question": "What areas did Beyonce compete in when she was growing up?",
+    "ground_truth": "singing and dancing"
+  },
+  {
+    "question": "When did Beyonce leave Destiny's Child and become a solo singer?",
+    "ground_truth": "2003"
+  },
+  {
+    "question": "In what city and state did Beyonce  grow up? ",
+    "ground_truth": "Houston, Texas"
+  },
+  {
+    "question": "In which decade did Beyonce become famous?",
+    "ground_truth": "late 1990s"
+  },
+  {
+    "question": "In what R&B group was she the lead singer?",
+    "ground_truth": "Destiny's Child"
+  },
+  {
+    "question": "What album made her a worldwide known artist?",
+    "ground_truth": "Dangerously in Love"
+  },
+  {
+    "question": "Who managed the Destiny's Child group?",
+    "ground_truth": "Mathew Knowles"
+  },
+  {
+    "question": "When did Beyonc\u00e9 rise to fame?",
+    "ground_truth": "late 1990s"
+  },
+  {
+    "question": "What role did Beyonc\u00e9 have in Destiny's Child?",
+    "ground_truth": "lead singer"
+  },
+  {
+    "question": "What was the first album Beyonc\u00e9 released as a solo artist?",
+    "ground_truth": "Dangerously in Love"
+  },
+  {
+    "question": "When did Beyonc\u00e9 release Dangerously in Love?",
+    "ground_truth": "2003"
+  },
+  {
+    "question": "How many Grammy awards did Beyonc\u00e9 win for her first solo album?",
+    "ground_truth": "five"
+  },
+  {
+    "question": "What was Beyonc\u00e9's role in Destiny's Child?",
+    "ground_truth": "lead singer"
+  },
+  {
+    "question": "What was the name of Beyonc\u00e9's first solo album?",
+    "ground_truth": "Dangerously in Love"
+  },
+  {
+    "question": "After her second solo album, what other entertainment venture did Beyonce explore?",
+    "ground_truth": "acting"
+  },
+  {
+    "question": "Which artist did Beyonce marry?",
+    "ground_truth": "Jay Z"
+  },
+  {
+    "question": "To set the record for Grammys, how many did Beyonce win?",
+    "ground_truth": "six"
+  },
+  {
+    "question": "For what movie did Beyonce receive  her first Golden Globe nomination?",
+    "ground_truth": "Dreamgirls"
+  },
+  {
+    "question": "When did Beyonce take a hiatus in her career and take control of her management?",
+    "ground_truth": "2010"
+  }
+]
